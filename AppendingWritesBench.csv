@@ -1,4 +1,4 @@
-async, blocksize, MB/sec
+O_SYNC, blocksize, MB/sec
 0,4096,314
 1,4096,77
 0,16384,778
