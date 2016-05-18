@@ -23,7 +23,7 @@ int fd = -1;
 bool terminated = false;
 int numSubmitted = 0;
 
-uint64_t totalFileSize = ((uint64_t)1) << 33; // 64GB file
+uint64_t totalFileSize = ((uint64_t)1) << 30; // 64GB file
 uint64_t blockSize = 65536;
 uint64_t numPerRound = 64;
 uint64_t numRounds = 0;
@@ -61,12 +61,13 @@ int main(int argc, char* argv[])
   int osync = 0;
 
   if (argc == 1) {
-    std::cerr << argv[0] << " <osync> <blockSize> " << std::endl;
+    std::cerr << argv[0] << "  <osync> <blockSize> <dir> " << std::endl;
     exit(1);
   }
 
   osync = atoi(argv[1]);
   blockSize = atoi(argv[2]);
+  std::string file = std::string(argv[3]) + "/ioexec_test";
 
   numRounds = totalFileSize/(numPerRound * blockSize);
 
@@ -92,7 +93,7 @@ int main(int argc, char* argv[])
     flags |= O_SYNC; 
   }
 
-  fd = open("/mnt/ioexec_test", flags,
+  fd = open(file.c_str(), flags,
     S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
   assert(fd >= 0);
 
@@ -153,7 +154,8 @@ int main(int argc, char* argv[])
 
   uint64_t diffMicro = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
   std::cout 
-    << osync
+    << argv[3]
+    << "," << osync
     << "," << blockSize 
     << "," << totalFileSize/diffMicro
     << std::endl;
